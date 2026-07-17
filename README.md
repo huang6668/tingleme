@@ -38,10 +38,10 @@ Node 运行时，不额外捆绑 Deno 或另一个 Node 可执行文件。
 仓库推送后，可在 Actions 页面手动运行 `Build desktop installers`。三个平台的构建
 结果会作为 workflow artifacts 上传。
 
-创建版本发布时，推送以 `v` 开头的标签，例如：
+创建版本发布时，推送与 `package.json` 版本一致且以 `v` 开头的标签，例如：
 
 ```text
-v1.0.0
+v1.0.1
 ```
 
 工作流会在三个平台构建成功后，把所有安装包合并发布到同一个 GitHub Release。
