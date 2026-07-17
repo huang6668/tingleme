@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <title>听了么</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">▶</div>
+          <div>
+            <p class="eyebrow">AUDIO SYSTEM</p>
+            <h1>听了么</h1>
+          </div>
+        </div>
+        <div class="system-chip"><span></span> 本地处理已就绪</div>
+
+        <nav class="steps" aria-label="任务步骤">
+          <button class="step is-active" data-step="input" type="button">
+            <b>01</b><span>提取设置<small>链接与输出参数</small></span>
+          </button>
+          <button class="step" data-step="progress" type="button" disabled>
+            <b>02</b><span>任务进度<small>下载与格式处理</small></span>
+          </button>
+          <button class="step" data-step="result" type="button" disabled>
+            <b>03</b><span>处理结果<small>保存或自动导入</small></span>
+          </button>
+        </nav>
+
+        <div class="sidebar-note">
+          <p class="eyebrow">PRIVACY_MODE</p>
+          <p>所有任务都在本机完成。链接和音频不会上传到我们的服务器。</p>
+        </div>
+        <footer>
+          <span id="app-version">VERSION 1.0.0</span>
+          <span>WIN / MAC</span>
+        </footer>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <span class="topbar-dot"></span>
+            <span>TING_LE_ME_AUDIO_PIPELINE</span>
+          </div>
+          <div class="topbar-status"><span>●</span> 单视频模式</div>
+        </header>
+
+        <section id="input-view" class="view is-visible" aria-labelledby="input-title">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow pink">NEW_EXTRACTION</p>
+              <h2 id="input-title">提取视频中的音频<span class="cursor"></span></h2>
+              <p>粘贴 YouTube、Bilibili 或其他受支持的单个视频链接。</p>
+            </div>
+            <div class="status-badge mint">[SYSTEM_OK]</div>
+          </div>
+
+          <form id="extract-form" novalidate>
+            <div class="content-grid">
+              <div class="form-stack">
+                <article class="panel accent-pink">
+                  <span class="corner-label">INPUT_SECURE</span>
+                  <label for="video-url" class="field-label"><span>↗</span> 视频链接</label>
+                  <div class="terminal-input">
+                    <span>&gt;</span>
+                    <input id="video-url" name="url" type="url" autocomplete="off" spellcheck="false" placeholder="https://www.youtube.com/watch?v=..." />
+                    <button id="clear-url" class="icon-button" type="button" aria-label="清空链接" title="清空链接">×</button>
+                  </div>
+                  <p id="url-error" class="field-error" role="alert"></p>
+                  <p class="field-help">如果链接同时包含播放列表信息，本次只处理当前视频。</p>
+                </article>
+
+                <article class="panel accent-pink">
+                  <div class="section-heading">
+                    <div>
+                      <p class="field-label"><span>◇</span> 输出格式</p>
+                      <p>始终优先获取来源中的最佳可用音频。</p>
+                    </div>
+                  </div>
+                  <div class="format-grid">
+                    <label class="format-option">
+                      <input type="radio" name="format" value="mp3" checked />
+                      <span class="format-card"><i></i><b>MP3</b><small>兼容性最好 · 高质量 320kbps</small></span>
+                    </label>
+                    <label class="format-option">
+                      <input type="radio" name="format" value="m4a" />
+                      <span class="format-card"><i></i><b>M4A</b><small>尽量保留来源 · 减少转码</small></span>
+                    </label>
+                    <label class="format-option">
+                      <input type="radio" name="format" value="alac" />
+                      <span class="format-card"><i></i><b>ALAC</b><small>Apple 无损容器 · 不提升来源音质</small></span>
+                    </label>
+                  </div>
+                </article>
+
+                <article class="panel collapsible">
+                  <button id="metadata-toggle" class="collapse-button" type="button" aria-expanded="false">
+                    <span><b>歌曲信息</b><small>可选 · 留空时优先使用来源信息</small></span>
+                    <i>＋</i>
+                  </button>
+                  <div id="metadata-fields" class="collapse-content" hidden>
+                    <div class="three-fields">
+                      <label>歌曲名<input id="song-title" maxlength="200" placeholder="默认使用视频标题" /></label>
+                      <label>歌手<input id="song-artist" maxlength="200" placeholder="选填" /></label>
+                      <label>专辑<input id="song-album" maxlength="200" placeholder="选填" /></label>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="panel import-panel">
+                  <div class="toggle-row">
+                    <div>
+                      <p class="field-label"><span>↳</span> Apple Music / iTunes 自动导入</p>
+                      <p>生成后复制到你选择的“自动添加”目录。</p>
+                    </div>
+                    <label class="switch">
+                      <input id="auto-import" type="checkbox" />
+                      <span></span>
+                    </label>
+                  </div>
+                  <div id="directory-row" class="directory-row" hidden>
+                    <div class="path-display"><span id="import-directory">尚未选择目录</span></div>
+                    <button id="choose-directory" class="button secondary small" type="button">选择文件夹</button>
+                    <button id="clear-directory" class="text-button" type="button">清除</button>
+                  </div>
+                  <p id="directory-error" class="field-error" role="alert"></p>
+                </article>
+
+                <div id="form-error" class="notice error" role="alert" hidden></div>
+                <div class="action-row">
+                  <p><span class="mint-text">●</span> 不会下载完整视频作为最终结果</p>
+                  <button id="start-button" class="button primary" type="submit"><span>⚡</span> 开始提取</button>
+                </div>
+              </div>
+
+              <aside class="info-column">
+                <div class="preview-box">
+                  <div class="wave-icon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                  <p>AWAITING_STREAM_DATA</p>
+                  <small>链接提交后将在此显示来源信息</small>
+                </div>
+                <article class="mini-panel">
+                  <p class="eyebrow mint-text">SUPPORTED_OUTPUT</p>
+                  <dl>
+                    <div><dt>MP3</dt><dd>广泛兼容</dd></div>
+                    <div><dt>M4A</dt><dd>优先少转码</dd></div>
+                    <div><dt>ALAC</dt><dd>Apple 生态</dd></div>
+                  </dl>
+                </article>
+                <article class="quality-note">
+                  <b>关于音质</b>
+                  <p>“最佳音质”表示选取来源提供的最佳音频。转换为 ALAC 不会恢复来源已经损失的细节。</p>
+                </article>
+              </aside>
+            </div>
+          </form>
+        </section>
+
+        <section id="progress-view" class="view progress-view" aria-labelledby="progress-title">
+          <div class="operation-card">
+            <div class="operation-heading">
+              <div>
+                <p class="eyebrow mint-text">TASK_SEQUENCE</p>
+                <h2 id="progress-title">正在准备任务</h2>
+                <p id="progress-subtitle">创建任务并检查输入…</p>
+              </div>
+              <span id="progress-badge" class="status-badge">[IN_PROGRESS]</span>
+            </div>
+
+            <div class="progress-header"><span>总体进度</span><b id="progress-percent">0%</b></div>
+            <div class="segmented-progress" id="segmented-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+
+            <div class="progress-body">
+              <ol class="timeline">
+                <li data-stage="info"><i></i><span><b>获取信息</b><small>识别视频和音频来源</small></span></li>
+                <li data-stage="downloading"><i></i><span><b>下载音频</b><small id="download-detail">等待开始</small></span></li>
+                <li data-stage="processing"><i></i><span><b>处理文件</b><small>转换、封面与歌曲信息</small></span></li>
+                <li data-stage="importing"><i></i><span><b>自动导入</b><small id="import-stage-detail">按设置执行</small></span></li>
+              </ol>
+              <div class="terminal-log" aria-live="polite">
+                <div class="terminal-bar"><span>LIVE_TASK_LOG</span><span>●</span></div>
+                <div id="task-log"></div>
+              </div>
+            </div>
+
+            <div id="task-error" class="notice error task-error" hidden>
+              <b id="task-error-title"></b>
+              <p id="task-error-suggestion"></p>
+            </div>
+            <div class="operation-actions">
+              <button id="back-button" class="button secondary" type="button" hidden>返回修改</button>
+              <button id="retry-button" class="button primary" type="button" hidden>重试任务</button>
+              <button id="cancel-button" class="button danger" type="button">取消任务</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="result-view" class="view" aria-labelledby="result-title">
+          <div class="page-heading result-heading">
+            <div>
+              <p id="result-kicker" class="eyebrow mint-text">TASK_COMPLETE</p>
+              <h2 id="result-title">提取完成<span class="cursor"></span></h2>
+              <p id="result-summary">音频文件已经可以使用。</p>
+            </div>
+            <div id="result-badge" class="status-badge mint">[COMPLETED]</div>
+          </div>
+
+          <div class="result-grid">
+            <article class="cover-card">
+              <div id="cover-art" class="cover-art">
+                <img id="cover-image" alt="视频封面" hidden />
+                <div id="cover-placeholder" class="cover-placeholder"><div class="wave-icon"><i></i><i></i><i></i><i></i><i></i></div><span>AUDIO_OUTPUT</span></div>
+              </div>
+              <span id="cover-status" class="cover-status">封面已嵌入</span>
+            </article>
+
+            <div class="result-details">
+              <article class="metadata-card">
+                <p class="field-label"><span>◎</span> 输出信息</p>
+                <dl>
+                  <div><dt>歌曲名</dt><dd id="result-song">—</dd></div>
+                  <div><dt>歌手</dt><dd id="result-artist">—</dd></div>
+                  <div><dt>专辑</dt><dd id="result-album">—</dd></div>
+                  <div><dt>文件格式</dt><dd id="result-format">MP3</dd></div>
+                </dl>
+              </article>
+
+              <article class="result-statuses">
+                <div id="cover-result-row"><i>✓</i><span><b>封面处理</b><small>视频封面已写入音频文件</small></span></div>
+                <div id="import-result-row"><i>—</i><span><b>自动导入</b><small>本次未开启</small></span></div>
+              </article>
+              <div id="warning-list" class="notice warning" hidden></div>
+
+              <div class="result-actions">
+                <button id="save-button" class="button mint-button" type="button"><span>⇩</span> 保存文件</button>
+                <button id="new-task-button" class="button primary" type="button"><span>＋</span> 提取另一个视频</button>
+              </div>
+              <div id="result-toast" class="notice success" hidden></div>
+              <div id="reimport-actions" class="reimport-actions" hidden>
+                <button id="reselect-import-directory" class="text-button" type="button">重新选择目录并导入</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>

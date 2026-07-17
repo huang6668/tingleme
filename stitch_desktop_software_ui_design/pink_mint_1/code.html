@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Neural Extractor - Task Results</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error-container": "#93000a",
+                        "tertiary": "#dfb7ff",
+                        "surface-container-highest": "#353534",
+                        "surface-bright": "#3a3939",
+                        "on-primary": "#65002e",
+                        "secondary": "#ffffff",
+                        "background": "#131313",
+                        "on-secondary-fixed-variant": "#00513f",
+                        "tertiary-container": "#ba6bff",
+                        "surface-dim": "#131313",
+                        "secondary-fixed": "#24ffcd",
+                        "outline": "#ac878f",
+                        "outline-variant": "#5c3f46",
+                        "surface-tint": "#ffb1c4",
+                        "tertiary-fixed-dim": "#dfb7ff",
+                        "inverse-primary": "#ba005b",
+                        "secondary-container": "#24ffcd",
+                        "on-secondary-fixed": "#002118",
+                        "on-primary-fixed-variant": "#8f0044",
+                        "on-secondary": "#00382b",
+                        "primary-fixed": "#ffd9e1",
+                        "on-tertiary-fixed": "#2d004f",
+                        "on-tertiary-container": "#41006f",
+                        "on-secondary-container": "#00725a",
+                        "on-primary-container": "#590028",
+                        "inverse-on-surface": "#313030",
+                        "on-surface-variant": "#e5bcc5",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "tertiary-fixed": "#f1daff",
+                        "on-error-container": "#ffdad6",
+                        "surface": "#131313",
+                        "primary": "#ffb1c4",
+                        "surface-container-low": "#1c1b1b",
+                        "error": "#ffb4ab",
+                        "surface-container": "#201f1f",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-tertiary": "#4b007e",
+                        "primary-container": "#ff4a8d",
+                        "on-primary-fixed": "#3f001a",
+                        "on-background": "#e5e2e1",
+                        "surface-container-high": "#2a2a2a",
+                        "primary-fixed-dim": "#ffb1c4",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#00e0b3",
+                        "on-tertiary-fixed-variant": "#6b00b0"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "container-max": "1280px",
+                        "unit": "4px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "16px"
+                    },
+                    fontFamily: {
+                        "code-snippet": ["Space Mono"],
+                        "label-sm": ["Space Mono"],
+                        "body-md": ["Space Mono"],
+                        "headline-lg-mobile": ["Space Mono"],
+                        "headline-xl": ["Space Mono"],
+                        "headline-lg": ["Space Mono"]
+                    },
+                    fontSize: {
+                        "code-snippet": ["14px", { lineHeight: "1.5", fontWeight: "400" }],
+                        "label-sm": ["12px", { lineHeight: "1", letterSpacing: "0.1em", fontWeight: "700" }],
+                        "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "headline-lg-mobile": ["24px", { lineHeight: "1.2", fontWeight: "700" }],
+                        "headline-xl": ["48px", { lineHeight: "1.1", letterSpacing: "-0.05em", fontWeight: "700" }],
+                        "headline-lg": ["32px", { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #131313; color: #e5e2e1; margin: 0; overflow-x: hidden; }
+        
+        /* Scanlines Overlay */
+        .scanlines {
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 9999;
+            opacity: 0.8;
+        }
+
+        /* Glitch Animation */
+        @keyframes glitch-anim {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 1px) }
+            40% { transform: translate(-1px, -1px) }
+            60% { transform: translate(2px, 1px) }
+            80% { transform: translate(1px, -1px) }
+            100% { transform: translate(0) }
+        }
+        .glitch-hover:hover {
+            animation: glitch-anim 0.2s linear infinite;
+        }
+
+        /* Continuous subtle glitch for frame */
+        @keyframes subtle-glitch {
+            0% { clip-path: inset(10% 0 80% 0); transform: translate(-2px, 0); }
+            5% { clip-path: inset(40% 0 20% 0); transform: translate(2px, 0); }
+            10% { clip-path: inset(80% 0 5% 0); transform: translate(-1px, 0); }
+            15% { clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+            100% { clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+        }
+        .glitch-frame::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: 2px solid #24ffcd;
+            animation: subtle-glitch 4s infinite linear alternate-reverse;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Duotone filter simulation */
+        .duotone-pink-black {
+            filter: contrast(1.2) sepia(1) hue-rotate(290deg) saturate(3) brightness(0.8);
+        }
+        
+        /* Blinking Cursor */
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .cursor-blink { animation: blink 1s step-end infinite; display: inline-block; width: 8px; height: 1em; background-color: #24ffcd; vertical-align: middle; margin-left: 4px; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-body-md text-on-surface">
+<div class="scanlines"></div>
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-screen w-64 left-0 top-0 border-r border-outline-variant pt-margin-desktop bg-surface-container-lowest dark:bg-surface-container-lowest flex-shrink-0 z-40 relative">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tighter">CYBER_SHELL</h1>
+</div>
+<p class="font-label-sm text-label-sm text-secondary-fixed">STATUS: ENCRYPTED</p>
+</div>
+<div class="flex-1 overflow-y-auto">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant opacity-70 hover:bg-surface-variant hover:text-primary hover:border-l-4 hover:border-primary transition-transform duration-150 hover:translate-x-1 font-label-sm text-label-sm border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+                        DASHBOARD
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-secondary font-bold border-l-4 border-secondary bg-secondary-container/10 px-4 py-3 transition-transform duration-150 hover:translate-x-1 font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; color: #24ffcd; text-shadow: 0 0 8px #24ffcd;">waves</span>
+<span style="color: #24ffcd; text-shadow: 0 0 8px #24ffcd;">EXTRACTOR</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant opacity-70 hover:bg-surface-variant hover:text-primary hover:border-l-4 hover:border-primary transition-transform duration-150 hover:translate-x-1 font-label-sm text-label-sm border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">equalizer</span>
+                        WAVEFORM
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant opacity-70 hover:bg-surface-variant hover:text-primary hover:border-l-4 hover:border-primary transition-transform duration-150 hover:translate-x-1 font-label-sm text-label-sm border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">database</span>
+                        METADATA
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant opacity-70 hover:bg-surface-variant hover:text-primary hover:border-l-4 hover:border-primary transition-transform duration-150 hover:translate-x-1 font-label-sm text-label-sm border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+                        LOGS
+                    </a>
+</li>
+</ul>
+</div>
+<div class="p-4 border-t border-outline-variant">
+<button class="w-full py-2 border border-primary text-primary font-label-sm text-label-sm hover:bg-primary hover:text-on-primary transition-colors glitch-hover">
+                INITIATE_RIP
+            </button>
+<ul class="mt-4 space-y-1">
+<li>
+<a class="flex items-center gap-4 px-4 py-2 text-on-surface-variant opacity-70 hover:text-primary font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">settings</span>
+                        SETTINGS
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-2 text-on-surface-variant opacity-70 hover:text-primary font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">logout</span>
+                        LOGOUT
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-margin-desktop w-full border-b border-outline-variant bg-background/95 backdrop-blur-sm z-30 h-16 flex-shrink-0 shadow-[0_0_15px_rgba(255,177,196,0.3)]">
+<div class="flex items-center gap-8 h-full">
+<span class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary drop-shadow-[0_0_10px_#ffb1c4] hidden md:block">NEURAL_EXTRACTOR_V1.0</span>
+<nav class="hidden md:flex h-full">
+<a class="flex items-center px-4 h-full text-on-surface-variant hover:text-secondary hover:drop-shadow-[0_0_8px_#24ffcd] transition-all duration-200 active:translate-x-0.5 font-label-sm text-label-sm" href="#">STREAMS</a>
+<a class="flex items-center px-4 h-full text-primary border-b-2 border-primary pb-1 font-label-sm text-label-sm" href="#" style="text-shadow: 0 0 8px #ffb1c4;">DECODE</a>
+<a class="flex items-center px-4 h-full text-on-surface-variant hover:text-secondary hover:drop-shadow-[0_0_8px_#24ffcd] transition-all duration-200 active:translate-x-0.5 font-label-sm text-label-sm" href="#">ARCHIVE</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-primary hover:text-secondary hover:drop-shadow-[0_0_8px_#24ffcd] transition-colors">
+<span class="material-symbols-outlined">terminal</span>
+</button>
+<button class="text-primary hover:text-secondary hover:drop-shadow-[0_0_8px_#24ffcd] transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 border border-primary rounded-none overflow-hidden">
+<img alt="Hacker avatar with neon visor" class="w-full h-full object-cover duotone-pink-black" data-alt="A small square pixel art avatar of a cyberpunk hacker character wearing a glowing neon pink visor against a dark background. High contrast, 8-bit style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUvn8u7ixbJKQEiE71454nOiahimCDfJsPbjnXTb_NBHEnwdXF54I71hYrmG1M4N8KnzESUzzVgNpRnm-T5zBKGc_7JxYmi9jU97bpZ9wiQ2qPgABEmr1G9-whhJEa8XcA74yaWPvKr0KUWzWFziSSf6A8dO06yCwWWMh1JKBj0MH6MlY5_GL8qs3erEQVc_IGd6hCX1rheFi8WTQEsKjJbM0Z4DReDiB2qc1CPf1t0bP1i7FqJCnrbowrrRqKPU75Z3Iz8V-aYFs"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 overflow-y-auto p-margin-mobile md:p-margin-desktop relative z-20">
+<div class="max-w-5xl mx-auto">
+<!-- Header -->
+<div class="mb-12 border-b-2 border-primary pb-4 inline-block">
+<div class="flex items-center gap-3">
+<span class="font-label-sm text-label-sm text-secondary-fixed border border-secondary-fixed px-2 py-1 bg-secondary-fixed/10 uppercase tracking-widest">[PROCESS_0x9A]</span>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest animate-pulse">LIVE</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-primary mt-4 uppercase drop-shadow-[0_0_15px_#ffb1c4] tracking-tighter">
+                        EXTRACTION COMPLETE<span class="cursor-blink"></span>
+</h2>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Album Art (Left/Top) -->
+<div class="md:col-span-5 relative group">
+<div class="aspect-square bg-surface-container-high border-2 border-primary p-2 relative overflow-hidden glitch-frame shadow-[0_0_20px_rgba(255,177,196,0.4)]">
+<!-- Inner decorative border -->
+<div class="absolute inset-2 border border-dashed border-primary/50 pointer-events-none z-10"></div>
+<img alt="Extracted Media Art" class="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition-all duration-500 duotone-pink-black group-hover:filter-none" data-alt="A square album cover featuring a retro-futuristic cyberpunk cityscape at night. Heavy pixelation, scanline effects, chromatic aberration. Prominent neon pink and mint green glowing signs against dark, brutalist architecture. Vaporwave aesthetic, highly detailed pixel art style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo-RJXn9J-EJRa42XHRVn_cBJXMQC-u545vkuEbz2P4GvH0sz0KqIAxDmZFVgcgZ9UqDBFwNDyh6iRU0k8TcL46iwORyd66rrMToGE4nmnkSHR53klKrL-LLKcHNVDL8PO224cpUinLJOS5XzP__PQ9_6VyBnruCcZ2pveXwVGeK3BP_2WGL2uq4sCzA-he86DsSXdFj2iyAIF7xOeLwTr_QnmPDr7QsHMsmd4wjaTFN78SfwBb2aFn6PmX1v77ikKZ9rSJ1jJxiw"/>
+<!-- Overlay status -->
+<div class="absolute bottom-4 right-4 bg-background border border-secondary-fixed px-2 py-1 z-20">
+<span class="font-code-snippet text-code-snippet text-secondary-fixed shadow-[0_0_5px_#24ffcd]">100%_CLEAN</span>
+</div>
+</div>
+</div>
+<!-- Metadata & Actions (Right/Bottom) -->
+<div class="md:col-span-7 flex flex-col gap-8">
+<!-- Data Table Card -->
+<div class="bg-surface border border-outline-variant p-6 relative">
+<!-- Decorative corner accent -->
+<div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-secondary-fixed"></div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mb-6 uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">database</span>
+                                EXTRACTED_METADATA.json
+                            </h3>
+<table class="w-full border-collapse">
+<tbody>
+<tr class="border-b border-dashed border-outline-variant hover:bg-surface-variant/50 transition-colors">
+<td class="py-4 pr-4 w-1/3">
+<span class="font-label-sm text-label-sm text-on-surface-variant opacity-60">TITLE_ID</span>
+</td>
+<td class="py-4 font-code-snippet text-code-snippet text-secondary-fixed" style="text-shadow: 0 0 8px rgba(36, 255, 205, 0.5);">
+                                            NEON_NIGHTS_V3
+                                        </td>
+</tr>
+<tr class="border-b border-dashed border-outline-variant hover:bg-surface-variant/50 transition-colors">
+<td class="py-4 pr-4">
+<span class="font-label-sm text-label-sm text-on-surface-variant opacity-60">ARTIST_SIG</span>
+</td>
+<td class="py-4 font-code-snippet text-code-snippet text-secondary-fixed" style="text-shadow: 0 0 8px rgba(36, 255, 205, 0.5);">
+                                            CYBER_KINETIC
+                                        </td>
+</tr>
+<tr class="border-b border-dashed border-outline-variant hover:bg-surface-variant/50 transition-colors">
+<td class="py-4 pr-4">
+<span class="font-label-sm text-label-sm text-on-surface-variant opacity-60">ALBUM_ROOT</span>
+</td>
+<td class="py-4 font-code-snippet text-code-snippet text-secondary-fixed" style="text-shadow: 0 0 8px rgba(36, 255, 205, 0.5);">
+                                            DATA_GHOSTS_EP
+                                        </td>
+</tr>
+<tr class="border-b border-dashed border-outline-variant hover:bg-surface-variant/50 transition-colors">
+<td class="py-4 pr-4">
+<span class="font-label-sm text-label-sm text-on-surface-variant opacity-60">HASH_VAL</span>
+</td>
+<td class="py-4 font-code-snippet text-code-snippet text-on-surface opacity-70 text-xs break-all">
+                                            0x7F8B99A2C...D4E1
+                                        </td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-4 mt-auto">
+<button class="flex-1 bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm py-4 px-6 border border-transparent shadow-[0_0_15px_rgba(36,255,205,0.6)] hover:bg-secondary-fixed-dim transition-all glitch-hover flex items-center justify-center gap-2 uppercase tracking-widest">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">save</span>
+                                SAVE DATA
+                            </button>
+<button class="flex-1 bg-primary text-on-primary font-label-sm text-label-sm py-4 px-6 border border-transparent shadow-[0_0_15px_rgba(255,177,196,0.6)] hover:bg-primary-container transition-all glitch-hover flex items-center justify-center gap-2 uppercase tracking-widest">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                                NEW TASK
+                            </button>
+</div>
+<!-- Minor decorative tech text -->
+<div class="text-right mt-2">
+<span class="font-code-snippet text-[10px] text-on-surface-variant opacity-40">SEQ_992_INIT... READY FOR NEXT INSTRUCTION</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

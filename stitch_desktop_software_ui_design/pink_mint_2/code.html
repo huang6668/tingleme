@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEURAL_EXTRACTOR_V1.0 - DECODE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#93000a",
+                        "tertiary": "#dfb7ff",
+                        "surface-container-highest": "#353534",
+                        "surface-bright": "#3a3939",
+                        "on-primary": "#65002e",
+                        "secondary": "#ffffff",
+                        "background": "#131313",
+                        "on-secondary-fixed-variant": "#00513f",
+                        "tertiary-container": "#ba6bff",
+                        "surface-dim": "#131313",
+                        "secondary-fixed": "#24ffcd",
+                        "outline": "#ac878f",
+                        "outline-variant": "#5c3f46",
+                        "surface-tint": "#ffb1c4",
+                        "tertiary-fixed-dim": "#dfb7ff",
+                        "inverse-primary": "#ba005b",
+                        "secondary-container": "#24ffcd",
+                        "on-secondary-fixed": "#002118",
+                        "on-primary-fixed-variant": "#8f0044",
+                        "on-secondary": "#00382b",
+                        "primary-fixed": "#ffd9e1",
+                        "on-tertiary-fixed": "#2d004f",
+                        "on-tertiary-container": "#41006f",
+                        "on-secondary-container": "#00725a",
+                        "on-primary-container": "#590028",
+                        "inverse-on-surface": "#313030",
+                        "on-surface-variant": "#e5bcc5",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "tertiary-fixed": "#f1daff",
+                        "on-error-container": "#ffdad6",
+                        "surface": "#131313",
+                        "primary": "#ffb1c4",
+                        "surface-container-low": "#1c1b1b",
+                        "error": "#ffb4ab",
+                        "surface-container": "#201f1f",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-tertiary": "#4b007e",
+                        "primary-container": "#ff4a8d",
+                        "on-primary-fixed": "#3f001a",
+                        "on-background": "#e5e2e1",
+                        "surface-container-high": "#2a2a2a",
+                        "primary-fixed-dim": "#ffb1c4",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#00e0b3",
+                        "on-tertiary-fixed-variant": "#6b00b0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "unit": "4px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "code-snippet": ["Space Mono"],
+                        "label-sm": ["Space Mono"],
+                        "body-md": ["Space Mono"],
+                        "headline-lg-mobile": ["Space Mono"],
+                        "headline-xl": ["Space Mono"],
+                        "headline-lg": ["Space Mono"]
+                    },
+                    "fontSize": {
+                        "code-snippet": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.05em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Cyberpunk Scanlines */
+        .scanlines {
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 4px;
+        }
+        
+        /* Blinking Terminal Cursor */
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1em;
+            background-color: theme('colors.secondary-fixed');
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Input specific styling to remove default webkit styles */
+        input[type="text"] {
+            box-shadow: none !important;
+        }
+
+        /* Glitch hover effect */
+        .glitch-hover:hover {
+            transform: translateX(2px);
+        }
+        
+        /* Custom Radio Button styling */
+        input[type="radio"]:checked + div {
+            border-color: theme('colors.secondary-fixed');
+            color: theme('colors.secondary-fixed');
+            box-shadow: inset 0 0 10px rgba(36, 255, 205, 0.2);
+        }
+        input[type="radio"]:checked + div .radio-indicator {
+            background-color: theme('colors.secondary-fixed');
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md h-screen w-full flex overflow-hidden relative">
+<!-- Global Scanline Overlay -->
+<div class="absolute inset-0 pointer-events-none z-[100] scanlines"></div>
+<!-- SIDE NAV BAR (JSON Component) -->
+<nav class="h-screen w-64 left-0 top-0 border-r border-outline-variant flex flex-col pt-margin-desktop bg-surface-container-lowest dark:bg-surface-container-lowest z-40">
+<!-- Header -->
+<div class="px-4 mb-8">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<h2 class="font-headline-lg text-headline-lg text-primary text-lg">CYBER_SHELL</h2>
+</div>
+<p class="font-code-snippet text-code-snippet text-outline text-xs uppercase">STATUS: ENCRYPTED</p>
+</div>
+<!-- Main Links -->
+<div class="flex-1 flex flex-col gap-1">
+<a class="text-on-surface-variant px-4 py-3 opacity-70 flex items-center gap-3 font-label-sm text-label-sm hover:bg-surface-variant hover:text-primary hover:border-l-4 hover:border-primary hover:translate-x-1 transition-transform duration-150 border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+                DASHBOARD
+            </a>
+<!-- Active State: EXTRACTOR -->
+<a class="text-secondary font-bold border-l-4 border-secondary bg-secondary-container/10 px-4 py-3 flex items-center gap-3 font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined">waves</span>
+                EXTRACTOR
+            </a>
+<a class="text-on-surface-variant px-4 py-3 opacity-70 flex items-center gap-3 font-label-sm text-label-sm hover:bg-surface-variant hover:text-primary hover:border-l-4 hover:border-primary hover:translate-x-1 transition-transform duration-150 border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">equalizer</span>
+                WAVEFORM
+            </a>
+<a class="text-on-surface-variant px-4 py-3 opacity-70 flex items-center gap-3 font-label-sm text-label-sm hover:bg-surface-variant hover:text-primary hover:border-l-4 hover:border-primary hover:translate-x-1 transition-transform duration-150 border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">database</span>
+                METADATA
+            </a>
+<a class="text-on-surface-variant px-4 py-3 opacity-70 flex items-center gap-3 font-label-sm text-label-sm hover:bg-surface-variant hover:text-primary hover:border-l-4 hover:border-primary hover:translate-x-1 transition-transform duration-150 border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+                LOGS
+            </a>
+</div>
+<!-- CTA & Footer -->
+<div class="p-4 mt-auto border-t border-outline-variant">
+<button class="w-full bg-primary-container text-background py-2 mb-4 font-label-sm text-label-sm border border-primary hover:shadow-[0_0_10px_#ffb1c4] transition-all">
+                INITIATE_RIP
+            </button>
+<div class="flex flex-col gap-1">
+<a class="text-on-surface-variant px-4 py-2 opacity-70 flex items-center gap-3 font-label-sm text-label-sm hover:text-primary transition-colors text-xs" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+                    SETTINGS
+                </a>
+<a class="text-on-surface-variant px-4 py-2 opacity-70 flex items-center gap-3 font-label-sm text-label-sm hover:text-primary transition-colors text-xs" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+                    LOGOUT
+                </a>
+</div>
+</div>
+</nav>
+<!-- MAIN CONTENT CANVAS -->
+<main class="flex-1 flex flex-col h-full bg-background relative z-30">
+<!-- TOP NAV BAR (JSON Component) -->
+<header class="w-full top-0 flex justify-between items-center px-margin-desktop border-b border-outline-variant bg-background/95 backdrop-blur-sm h-16 shrink-0 bg-background dark:bg-background shadow-[0_0_15px_rgba(255,177,196,0.3)]">
+<div class="flex items-center gap-6">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary drop-shadow-[0_0_10px_#ffb1c4] text-xl">
+                    NEURAL_EXTRACTOR_V1.0
+                </h1>
+<nav class="hidden md:flex items-center gap-6 ml-8 mt-1">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary hover:drop-shadow-[0_0_8px_#24ffcd] transition-all duration-200 active:translate-x-0.5" href="#">
+                        STREAMS
+                    </a>
+<!-- Active State: DECODE -->
+<a class="font-label-sm text-label-sm text-primary border-b-2 border-primary pb-1 transition-all duration-200 active:translate-x-0.5" href="#">
+                        DECODE
+                    </a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary hover:drop-shadow-[0_0_8px_#24ffcd] transition-all duration-200 active:translate-x-0.5" href="#">
+                        ARCHIVE
+                    </a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-primary dark:text-primary hover:text-secondary hover:drop-shadow-[0_0_8px_#24ffcd] transition-all">
+<span class="material-symbols-outlined">terminal</span>
+</button>
+<button class="text-primary dark:text-primary hover:text-secondary hover:drop-shadow-[0_0_8px_#24ffcd] transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-none border border-primary overflow-hidden ml-2">
+<img alt="Hacker avatar with neon visor" class="w-full h-full object-cover filter contrast-125 saturate-50 sepia-[.2] hue-rotate-[-30deg]" data-alt="Hacker avatar with neon visor, glowing pink eyes, dark tech background, cyberpunk style pixel art representation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjeSJ8DSFXK3wSUutrR0PsBDSpK3c1o-_Hm9O-bABr7jlXRwb6A3xAfNZ4mrdwjVUGrXCZ6jfluu6U2omtAheeEA8aELIH78r41fnRtLwLErioQxS_1SbCZIoZ3o2hl3PVuQmD1vgmFZu5PS3z-XwfHpsyU9V05-DockfkEubuesILF8HsnbwdhiEw-bKijb6mjz8RMR2RmXvNx5uSIE_MiZrSrj8vXQA2hD_DtH-Vw3UgOJLegXeFnG8INY4D49iG65keaO-QDQQ"/>
+</div>
+</div>
+</header>
+<!-- EXTRACTION INTERFACE (Main View) -->
+<div class="flex-1 overflow-y-auto p-margin-desktop flex flex-col gap-8">
+<!-- Page Header Area -->
+<div class="border-b border-outline-variant pb-4 flex justify-between items-end">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-secondary drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] uppercase tracking-tighter">
+                        Payload_Config
+                    </h2>
+<p class="font-code-snippet text-code-snippet text-on-surface-variant mt-2">Configure target data stream for neural extraction.</p>
+</div>
+<div class="px-2 py-1 border border-secondary-fixed text-secondary-fixed font-label-sm text-label-sm text-[10px] bg-secondary-fixed/10">
+                    [SYSTEM_OK]
+                </div>
+</div>
+<div class="grid grid-cols-12 gap-gutter flex-1">
+<!-- Left Column: Input Form -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<!-- URL Input Panel -->
+<div class="bg-surface-container-lowest border-t-2 border-primary p-6 relative">
+<div class="absolute top-0 right-0 bg-primary text-background font-label-sm text-[10px] px-2 py-0.5 border-b border-l border-primary">INPUT_SECURE</div>
+<label class="block font-label-sm text-label-sm text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">link</span>
+                            TARGET_STREAM_URL
+                        </label>
+<div class="relative flex items-center bg-background border-b border-secondary-fixed p-3 group focus-within:shadow-[0_10px_10px_-10px_#24ffcd]">
+<span class="font-code-snippet text-secondary-fixed mr-2 opacity-50">&gt;</span>
+<input class="flex-1 bg-transparent border-none outline-none font-code-snippet text-code-snippet text-secondary placeholder-on-surface-variant/30 focus:ring-0 p-0" placeholder="https://stream.node.local/data/..." type="text"/>
+<span class="terminal-cursor absolute right-4"></span>
+</div>
+</div>
+<!-- Format Selection -->
+<div class="bg-surface-container-lowest border-t-2 border-primary p-6">
+<label class="block font-label-sm text-label-sm text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">memory</span>
+                            OUTPUT_ENCODING_FORMAT
+                        </label>
+<div class="grid grid-cols-3 gap-4">
+<!-- Radio MP3 -->
+<label class="cursor-pointer relative">
+<input checked="" class="peer sr-only" name="format" type="radio" value="mp3"/>
+<div class="border border-outline-variant p-4 text-center transition-all duration-200 hover:border-primary/50 group">
+<div class="radio-indicator w-2 h-2 bg-outline-variant mb-2 mx-auto"></div>
+<span class="font-code-snippet text-code-snippet block font-bold text-on-surface">.MP3</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant opacity-60">LOSSY_COMPRESSION</span>
+</div>
+</label>
+<!-- Radio M4A -->
+<label class="cursor-pointer relative">
+<input class="peer sr-only" name="format" type="radio" value="m4a"/>
+<div class="border border-outline-variant p-4 text-center transition-all duration-200 hover:border-primary/50 group">
+<div class="radio-indicator w-2 h-2 bg-outline-variant mb-2 mx-auto"></div>
+<span class="font-code-snippet text-code-snippet block font-bold text-on-surface">.M4A</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant opacity-60">AAC_STANDARD</span>
+</div>
+</label>
+<!-- Radio ALAC -->
+<label class="cursor-pointer relative">
+<input class="peer sr-only" name="format" type="radio" value="alac"/>
+<div class="border border-outline-variant p-4 text-center transition-all duration-200 hover:border-primary/50 group">
+<div class="radio-indicator w-2 h-2 bg-outline-variant mb-2 mx-auto"></div>
+<span class="font-code-snippet text-code-snippet block font-bold text-on-surface">.ALAC</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant opacity-60">LOSSLESS_ARCHIVE</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Action Area -->
+<div class="mt-4 flex justify-end">
+<button class="bg-primary text-background font-label-sm text-label-sm px-8 py-4 border border-primary flex items-center gap-3 glitch-hover hover:shadow-[0_0_20px_#24ffcd] transition-all duration-100 uppercase font-bold tracking-widest">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                            Start Extraction
+                        </button>
+</div>
+</div>
+<!-- Right Column: Status / Visuals -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<!-- Data Vis Placeholder -->
+<div class="bg-surface-container border border-outline-variant h-48 relative overflow-hidden flex flex-col items-center justify-center">
+<div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, #131313 25%, transparent 25%, transparent 75%, #131313 75%, #131313), repeating-linear-gradient(45deg, #131313 25%, #1c1b1b 25%, #1c1b1b 75%, #131313 75%, #131313); background-position: 0 0, 10px 10px; background-size: 20px 20px;"></div>
+<span class="material-symbols-outlined text-secondary-fixed/50 text-5xl mb-2 z-10">graphic_eq</span>
+<span class="font-code-snippet text-xs text-secondary-fixed/50 z-10">AWAITING_STREAM_DATA</span>
+</div>
+<!-- Simple Metadata Info -->
+<div class="bg-surface-container-lowest border-t-2 border-secondary-fixed p-4 flex-1">
+<h3 class="font-label-sm text-label-sm text-secondary-fixed mb-4">NODE_INFO</h3>
+<ul class="space-y-2 font-code-snippet text-xs text-on-surface-variant">
+<li class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span>ROUTING:</span> <span class="text-secondary">PROXY_CHAIN_ALPHA</span>
+</li>
+<li class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span>ENCRYPTION:</span> <span class="text-secondary">AES-256-GCM</span>
+</li>
+<li class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span>LOCAL_STORAGE:</span> <span class="text-secondary">42.8_TB_FREE</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Scrollable System Log -->
+<div class="mt-auto pt-6">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm text-primary">SYSTEM_LOG</span>
+<button class="font-code-snippet text-xs text-outline hover:text-secondary-fixed transition-colors">[CLEAR_BUFFER]</button>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant h-40 overflow-y-auto p-4 font-code-snippet text-code-snippet shadow-[inset_0_4px_10px_rgba(0,0,0,0.5)]">
+<ul class="space-y-1 text-xs opacity-80">
+<li class="text-on-surface-variant"><span class="text-outline mr-2">[10:42:01]</span> Core modules initialized.</li>
+<li class="text-on-surface-variant"><span class="text-outline mr-2">[10:42:05]</span> Connecting to extraction proxy network...</li>
+<li class="text-secondary-fixed"><span class="text-outline mr-2">[10:42:06]</span> Proxy established. Routing optimal.</li>
+<li class="text-on-surface-variant"><span class="text-outline mr-2">[10:42:15]</span> Awaiting user input parameters...</li>
+<!-- Simulated lines -->
+<li class="text-outline-variant"><span class="mr-2">...</span></li>
+<li class="text-outline-variant"><span class="mr-2">...</span></li>
+</ul>
+</div>
+</div>
+</div>
+</main>
+</body></html>
