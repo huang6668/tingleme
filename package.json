@@ -1,6 +1,6 @@
 {
   "name": "ting-le-me",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "跨平台在线视频音频提取与 Apple Music/iTunes 导入工具",
   "main": "electron/main.js",
   "author": "cunleme",
@@ -23,7 +23,7 @@
     "appId": "com.cunleme.tingleme",
     "productName": "听了么",
     "asar": true,
-    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "artifactName": "ting-le-me-${version}-${os}-${arch}.${ext}",
     "directories": {
       "output": "dist"
     },
