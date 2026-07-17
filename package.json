@@ -1,6 +1,6 @@
 {
   "name": "ting-le-me",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "跨平台在线视频音频提取与 Apple Music/iTunes 导入工具",
   "main": "electron/main.js",
   "author": "cunleme",
@@ -11,7 +11,7 @@
     "stage:tools": "node scripts/stage-tools.js",
     "verify": "node --check electron/main.js && node --check electron/preload.js && node --check electron/services/extractor.js && node --check electron/services/settings.js && node --check src/app.js && node --check scripts/stage-tools.js && node scripts/check-ui-contract.js",
     "test": "node --test tests/*.test.js",
-    "dist:win": "electron-builder --win nsis --x64 --publish never",
+    "dist:win": "electron-builder --win nsis portable --x64 --publish never",
     "dist:mac:x64": "electron-builder --mac dmg zip --x64 --publish never",
     "dist:mac:arm64": "electron-builder --mac dmg zip --arm64 --publish never"
   },
@@ -62,15 +62,25 @@
           "arch": [
             "x64"
           ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },
     "nsis": {
+      "artifactName": "ting-le-me-${version}-win-${arch}-setup.${ext}",
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "听了么"
+    },
+    "portable": {
+      "artifactName": "ting-le-me-${version}-win-${arch}-portable.${ext}"
     }
   }
 }

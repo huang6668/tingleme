@@ -14,6 +14,7 @@ Stitch 初稿实现，支持 YouTube、Bilibili 和 yt-dlp 兼容的其他单视
 - 可选复制到 Apple Music/iTunes 自动添加目录
 - 记忆输出格式和自动导入设置
 - 支持取消、修改和重试，以及连续处理下一个链接
+- Windows 同时提供安装版和单文件免安装版
 
 ## 二进制边界
 
@@ -41,10 +42,18 @@ Node 运行时，不额外捆绑 Deno 或另一个 Node 可执行文件。
 创建版本发布时，推送与 `package.json` 版本一致且以 `v` 开头的标签，例如：
 
 ```text
-v1.0.2
+v1.0.3
 ```
 
 工作流会在三个平台构建成功后，把所有安装包合并发布到同一个 GitHub Release。
+
+Windows Release 中包含两个 `.exe`：
+
+- `*-setup.exe`：常规安装版，会创建开始菜单和桌面快捷方式；
+- `*-portable.exe`：单文件免安装版，下载后直接双击运行。
+
+免安装版仍会在 Windows 用户数据目录保存少量设置和任务临时文件，但不会安装
+FFmpeg、yt-dlp 或其他系统环境。
 
 当前 macOS 安装包未签名和公证。首次打开时，macOS 可能要求用户在“隐私与安全性”
 中确认。正式公开发行前建议配置 Apple Developer ID；Windows 公开发行也建议配置
