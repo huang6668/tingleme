@@ -169,6 +169,27 @@ async function findDownloadedFiles(taskDirectory) {
   return { audio, cover };
 }
 
+function coverMimeType(filePath) {
+  const extension = path.extname(filePath).toLowerCase();
+  return {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.webp': 'image/webp',
+    '.avif': 'image/avif'
+  }[extension] || 'application/octet-stream';
+}
+
+async function coverDataUrl(filePath) {
+  if (!filePath) return '';
+  const stat = await fs.stat(filePath);
+  // A video thumbnail should be small. Avoid sending an unexpectedly large
+  // source image through IPC while keeping the embedded audio unaffected.
+  if (stat.size > 12 * 1024 * 1024) return '';
+  const bytes = await fs.readFile(filePath);
+  return `data:${coverMimeType(filePath)};base64,${bytes.toString('base64')}`;
+}
+
 function metadataArgs(metadata) {
   const pairs = [
     ['title', metadata.title],
@@ -340,7 +361,6 @@ class ExtractionManager {
         album,
         sourceTitle,
         site: trimText(info.extractor_key) || trimText(info.extractor),
-        thumbnail: trimText(info.thumbnail),
         playlistIgnored: Boolean(info.playlist || info.playlist_id)
       });
 
@@ -376,6 +396,15 @@ class ExtractionManager {
 
       const files = await findDownloadedFiles(taskDirectory);
       if (!files.audio) throw new Error('下载完成后未找到来源音频文件。');
+      let coverPreview = '';
+      if (files.cover) {
+        try {
+          coverPreview = await coverDataUrl(files.cover);
+        } catch {
+          // The cover is still passed to FFmpeg below; preview failure should
+          // not make an otherwise valid audio extraction fail.
+        }
+      }
       const sourceCodec = trimText(info.acodec) || trimText(
         (info.requested_formats || []).find((format) => format.acodec && format.acodec !== 'none')?.acodec
       );
@@ -459,6 +488,8 @@ class ExtractionManager {
         format: options.format,
         fileName: outputName,
         outputPath,
+        coverPath: files.cover || '',
+        coverDataUrl: coverPreview,
         coverEmbedded,
         autoImportRequested: options.autoImport,
         imported: Boolean(importedPath),
@@ -470,7 +501,12 @@ class ExtractionManager {
         type: 'complete',
         stage: warnings.length ? STAGES.WARNING : STAGES.COMPLETED,
         progress: 100,
-        result: { ...result, outputPath: undefined, importedPath: importedPath ? options.importDirectory : '' }
+        result: {
+          ...result,
+          outputPath: undefined,
+          coverPath: undefined,
+          importedPath: importedPath ? options.importDirectory : ''
+        }
       });
     } catch (error) {
       if (controller.cancelled || error.code === 'CANCELLED') {
@@ -506,6 +542,7 @@ module.exports = {
   STAGES,
   buildFfmpegArgs,
   buildYtDlpArgs,
+  coverDataUrl,
   copyWithoutOverwrite,
   friendlyError,
   sanitizeFilename,

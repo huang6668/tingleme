@@ -188,14 +188,6 @@ function showTaskError(message, suggestion) {
 
 function populateMetadata(payload) {
   state.metadata = payload;
-  if (payload.thumbnail) {
-    $('#cover-image').src = payload.thumbnail;
-    $('#cover-image').hidden = false;
-    $('#cover-placeholder').hidden = true;
-  } else {
-    $('#cover-image').hidden = true;
-    $('#cover-placeholder').hidden = false;
-  }
   appendLog(`已识别：${payload.title}`);
   if (payload.playlistIgnored) appendLog('检测到播放列表参数，本次只处理当前视频。');
 }
@@ -214,6 +206,23 @@ function renderResult(result, stage) {
   $('#result-badge').textContent = hasWarning ? '[WARNING]' : '[COMPLETED]';
   $('#result-badge').className = `status-badge ${hasWarning ? '' : 'mint'}`;
 
+  const coverImage = $('#cover-image');
+  const coverPlaceholder = $('#cover-placeholder');
+  coverImage.onerror = () => {
+    coverImage.hidden = true;
+    coverPlaceholder.hidden = false;
+    $('#cover-status').textContent = result.coverEmbedded ? '已嵌入（预览失败）' : '无嵌入封面';
+  };
+  if (result.coverDataUrl) {
+    coverImage.src = result.coverDataUrl;
+    coverImage.hidden = false;
+    coverPlaceholder.hidden = true;
+  } else {
+    coverImage.removeAttribute('src');
+    coverImage.hidden = true;
+    coverPlaceholder.hidden = false;
+  }
+
   const coverRow = $('#cover-result-row');
   if (result.coverEmbedded) {
     coverRow.classList.remove('is-warning');
@@ -225,6 +234,9 @@ function renderResult(result, stage) {
     coverRow.querySelector('i').textContent = '!';
     coverRow.querySelector('small').textContent = '封面未能写入，音频仍可正常使用';
     $('#cover-status').textContent = '无嵌入封面';
+  }
+  if (result.coverEmbedded && !result.coverDataUrl) {
+    $('#cover-status').textContent = '已嵌入（无预览）';
   }
 
   const importRow = $('#import-result-row');

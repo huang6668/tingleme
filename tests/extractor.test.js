@@ -6,6 +6,7 @@ const test = require('node:test');
 const {
   buildFfmpegArgs,
   buildYtDlpArgs,
+  coverDataUrl,
   copyWithoutOverwrite,
   friendlyError,
   sanitizeFilename,
@@ -58,6 +59,17 @@ test('ALAC uses the ALAC encoder and MP3 uses high bitrate encoding', () => {
   assert.ok(mp3.includes('libmp3lame'));
   assert.ok(mp3.includes('320k'));
   assert.ok(mp3.includes('attached_pic'));
+});
+
+test('coverDataUrl turns a local thumbnail into an IPC-safe data URL', async () => {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'ting-le-me-cover-test-'));
+  try {
+    const cover = path.join(directory, 'source.jpg');
+    await fs.writeFile(cover, Buffer.from([0xff, 0xd8, 0xff, 0xd9]));
+    assert.equal(await coverDataUrl(cover), 'data:image/jpeg;base64,/9j/2Q==');
+  } finally {
+    await fs.rm(directory, { recursive: true, force: true });
+  }
 });
 
 test('copyWithoutOverwrite generates a readable non-conflicting filename', async () => {
