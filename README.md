@@ -95,7 +95,7 @@ yt-dlp 需要 JavaScript 运行时来完整解析 YouTube。应用会复用 Elec
 工作流配置位于 [`.github/workflows/build.yml`](./.github/workflows/build.yml)。推送与 `package.json` 版本一致、以 `v` 开头的标签即可构建 Release，例如：
 
 ```text
-v1.0.5
+v1.0.6
 ```
 
 构建矩阵目前包含：

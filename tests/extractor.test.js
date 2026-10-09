@@ -61,6 +61,19 @@ test('ALAC uses the ALAC encoder and MP3 uses high bitrate encoding', () => {
   assert.ok(mp3.includes('attached_pic'));
 });
 
+test('attached cover streams do not stop the whole audio transcode', () => {
+  const args = buildFfmpegArgs({
+    source: 'source.webm',
+    cover: 'source.webp',
+    output: 'output.m4a',
+    format: 'm4a',
+    metadata: {},
+    sourceCodec: 'opus'
+  });
+  assert.ok(!args.includes('-frames:v'));
+  assert.ok(args.includes('attached_pic'));
+});
+
 test('coverDataUrl turns a local thumbnail into an IPC-safe data URL', async () => {
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'ting-le-me-cover-test-'));
   try {

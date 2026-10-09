@@ -219,7 +219,6 @@ function buildFfmpegArgs({ source, cover, output, format, metadata, sourceCodec 
   if (cover) {
     args.push(
       '-c:v', 'mjpeg',
-      '-frames:v', '1',
       '-disposition:v:0', 'attached_pic',
       '-metadata:s:v', 'title=Album cover',
       '-metadata:s:v', 'comment=Cover (front)'

@@ -28,7 +28,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: "false"
-      YT_DLP_RELEASE: "2026.07.04"
+      YT_DLP_RELEASE: "2026.08.19"
 
     steps:
       - name: Checkout source
