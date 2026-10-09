@@ -387,6 +387,8 @@ class ExtractionManager {
       };
       await this.runYtDlp(controller, [
         '--newline', '--no-overwrites',
+        '--retries', '10',
+        '--fragment-retries', '10',
         '--ffmpeg-location', this.tools.directory,
         '--progress-template', 'download:DOWNLOAD_PROGRESS:%(progress._percent_str)s',
         '--write-thumbnail', '-f', 'bestaudio/best',
